@@ -12,17 +12,17 @@ async function addUser() {
   let name = await askName("What is the name of the person you want to add? ");
   let age = await askAge("What is the age of the person you want to add? ");
   let year = await askYear("What year is the person you are adding? (1-4) ");
-  rl.close();
-  console.log(name, age, year);
+  let userObjects = { name, age, year };
+  await addToDatabase("users", userObjects);
 }
 
 
 function getYear(year) {
   const yearMap = {
-    0: "Freshman",
-    1: "Sophmore",
-    2: "Junior",
-    3: "Senior"
+    1: "Freshman",
+    2: "Sophmore",
+    3: "Junior",
+    4: "Senior"
   }
   return yearMap[year];
 }
@@ -56,7 +56,6 @@ function askAge(question) {
 function askYear(question) {
   return new Promise((resolve) => {
     rl.question(question, (answer) => {
-      let year = getYear(answer);
       if (!getYear(answer)) {
         console.log(`Invalid input. ${question}`);
         resolve(askYear(question)); // Recur until valid input
@@ -67,8 +66,39 @@ function askYear(question) {
   });
 }
 
+function askYesNo(question) {
+  return new Promise((resolve) => {
+    rl.question(question, (answer) => {
+      const trimmedAnswer = answer.trim().toLowerCase();
+      if (trimmedAnswer === '' || (trimmedAnswer !== 'y' && trimmedAnswer !== 'n')) {
+        console.log('Invalid input. Please enter y or n. ');
+        resolve(askYesNo(question)); // Recur until valid input
+      } else {
+        resolve(trimmedAnswer); // Resolve with the valid answer
+      }
+    });
+  });
+}
+
+async function addToDatabase(dataName, data) {
+  await db.set(`${dataName}.${createId()}`, data);
+}
+
+function createId() {
+  return Math.floor(100000000 + Math.random() * 900000000);
+}
+
 async function main() {
   await addUser();
+  let yesno = await askYesNo("Do you want to add another user? (y/n) ");
+  if (yesno === "y") {
+    main();
+  }
+  else {
+    rl.close();
+  }
 }
+
+
 
 main();
