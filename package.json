@@ -1,0 +1,14 @@
+{
+  "name": "cse485-gitexample",
+  "version": "1.0.0",
+  "description": "My name is Zack Walton and I am showcasing the skill of Git for Professionals. I will be doing a small program that...",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "quickdb": "^1.0.5"
+  }
+}
